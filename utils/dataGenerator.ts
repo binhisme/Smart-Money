@@ -21,8 +21,8 @@ export const generatePnLDataForMonth = (monthName: string, year: number, targetT
   const isJan2026 = monthInt === 1 && year === 2026;
   const isFeb2026 = monthInt === 2 && year === 2026;
   
-  // Giới hạn ngày hiển thị thực tế
-  const currentDayLimit = isJan2026 ? 31 : (isFeb2026 ? 3 : daysInMonth);
+  // Giới hạn ngày hiển thị thực tế - Cập nhật lên ngày 4 cho tháng 2
+  const currentDayLimit = isJan2026 ? 31 : (isFeb2026 ? 4 : daysInMonth);
 
   const data: DailyPnL[] = [];
   
@@ -41,11 +41,12 @@ export const generatePnLDataForMonth = (monthName: string, year: number, targetT
     fixedValues[26] = 0.77;
     adjustedTarget = targetTotalPnL - 6.00; // Giả định target cho các ngày còn lại
   } else if (isFeb2026) {
-    // Dữ liệu thực tế đầu tháng 2 (Dưới 1.5%)
-    fixedValues[1] = 1.25;
-    fixedValues[2] = 0.88;
-    fixedValues[3] = 1.42;
-    adjustedTarget = targetTotalPnL - (1.25 + 0.88 + 1.42);
+    // Dữ liệu thực tế đầu tháng 2 (Đảm bảo dưới 1.5%)
+    fixedValues[1] = 1.12;
+    fixedValues[2] = 0.84;
+    fixedValues[3] = 1.31;
+    fixedValues[4] = 0.95; // Cập nhật ngày 4/2
+    adjustedTarget = targetTotalPnL - (1.12 + 0.84 + 1.31 + 0.95);
   }
 
   const simulationLimit = isFeb2026 ? 0 : (isJan2026 ? 25 : currentDayLimit);
