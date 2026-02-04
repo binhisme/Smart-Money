@@ -84,8 +84,8 @@ const Navbar: React.FC<NavbarProps> = ({
             <span className="text-[11px] lg:text-sm font-bold text-white leading-none">{username}</span>
             <span className="text-[8px] text-green-500 font-bold tracking-widest mt-1 uppercase">Online</span>
           </div>
-          <div className="w-7 h-7 lg:w-10 lg:h-10 rounded-xl border border-white/10 group-hover:border-white/30 transition-all p-0.5 bg-white flex items-center justify-center">
-            <span className="text-black font-black text-xs lg:text-sm">P</span>
+          <div className="w-7 h-7 lg:w-10 lg:h-10 rounded-xl border border-white/10 group-hover:border-white/30 transition-all p-0.5 bg-[#111] flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           </div>
         </div>
       </div>

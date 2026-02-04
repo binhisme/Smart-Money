@@ -21,30 +21,31 @@ export const generatePnLDataForMonth = (monthName: string, year: number, targetT
   const isJan2026 = monthInt === 1 && year === 2026;
   const isFeb2026 = monthInt === 2 && year === 2026;
   
-  const currentDayLimit = isFeb2026 ? 2 : (isJan2026 ? 31 : daysInMonth);
+  // Giới hạn ngày hiển thị thực tế
+  const currentDayLimit = isJan2026 ? 31 : (isFeb2026 ? 3 : daysInMonth);
 
   const data: DailyPnL[] = [];
   
-  const lossDaysRatio = 0.185 + (Math.random() * (0.15));
+  const lossDaysRatio = 0.185 + (Math.random() * (0.1));
   const lossDaysCount = Math.floor(currentDayLimit * lossDaysRatio); 
-  const profitDaysCount = currentDayLimit - lossDaysCount;
 
   let adjustedTarget = targetTotalPnL;
   let fixedValues: Record<number, number> = {};
 
-  if (isFeb2026) {
-    // Dữ liệu cho ngày 1 và 2 tháng 2
-    fixedValues[1] = 1.02;
-    fixedValues[2] = 1.13;
-    adjustedTarget = 0; // Đã đạt mục tiêu qua fixed
-  } else if (isJan2026) {
-    fixedValues[31] = 6.88;
-    fixedValues[30] = 5.25;
+  if (isJan2026) {
+    fixedValues[31] = 0.88;
+    fixedValues[30] = 1.25;
     fixedValues[29] = 1.14;
-    fixedValues[28] = 6.01;
-    fixedValues[27] = 5.00;
-    fixedValues[26] = 6.07;
-    adjustedTarget = targetTotalPnL - 30.35;
+    fixedValues[28] = 0.91;
+    fixedValues[27] = 1.05;
+    fixedValues[26] = 0.77;
+    adjustedTarget = targetTotalPnL - 6.00; // Giả định target cho các ngày còn lại
+  } else if (isFeb2026) {
+    // Dữ liệu thực tế đầu tháng 2 (Dưới 1.5%)
+    fixedValues[1] = 1.25;
+    fixedValues[2] = 0.88;
+    fixedValues[3] = 1.42;
+    adjustedTarget = targetTotalPnL - (1.25 + 0.88 + 1.42);
   }
 
   const simulationLimit = isFeb2026 ? 0 : (isJan2026 ? 25 : currentDayLimit);
@@ -54,7 +55,7 @@ export const generatePnLDataForMonth = (monthName: string, year: number, targetT
   const losses: number[] = [];
   let sumLosses = 0;
   for (let i = 0; i < simLossCount; i++) {
-    const val = -(1.5 + Math.random() * 0.5);
+    const val = -(0.5 + Math.random() * 0.5);
     losses.push(val);
     sumLosses += val;
   }
@@ -66,9 +67,9 @@ export const generatePnLDataForMonth = (monthName: string, year: number, targetT
   let currentProfitSum = 0;
   if (simProfitCount > 0) {
     for (let i = 0; i < simProfitCount - 1; i++) {
-      const variance = (Math.random() * 0.6 - 0.3) * avgProfitPerDay;
+      const variance = (Math.random() * 0.4 - 0.2) * avgProfitPerDay;
       let val = avgProfitPerDay + variance;
-      if (val < 0.2) val = 0.5 + (Math.random() * 0.2);
+      if (val < 0.1) val = 0.2 + (Math.random() * 0.1);
       profits.push(val);
       currentProfitSum += val;
     }

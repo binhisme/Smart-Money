@@ -12,9 +12,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, username }
   if (!isOpen) return null;
 
   const profileData = {
-    uid: 'VN36987251',
-    mobile: '09*******361',
-    email: 'p*********6@gmail.com',
+    uid: 'VN29654102',
+    mobile: '09*******290',
+    email: 'p*********9@gmail.com',
   };
 
   return (
@@ -42,8 +42,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, username }
             <div className="bg-[#141414] p-5 rounded-[2rem] border border-white/5 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-2xl border-2 border-red-600/30 overflow-hidden p-0.5 bg-white flex items-center justify-center shadow-lg">
-                     <span className="text-black font-black text-3xl">P</span>
+                  <div className="w-16 h-16 rounded-2xl border-2 border-red-600/30 overflow-hidden p-0.5 bg-black flex items-center justify-center shadow-lg">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-[#141414] rounded-full"></div>
                 </div>

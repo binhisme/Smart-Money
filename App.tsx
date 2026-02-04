@@ -31,14 +31,17 @@ const App: React.FC = () => {
   const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
-  const username = "PLong36";
+  const username = "PNL.29";
 
-  // Lịch sử PnL từ tháng 12/2025 đến 02/02/2026
-  // Tổng lợi nhuận yêu cầu: 25.1%
+  /**
+   * Kết quả tháng:
+   * Jan 2026: 7.95%
+   * Feb 2026 (đến ngày 3): 1.25 + 0.88 + 1.42 = 3.55%
+   * Tổng ROI: 11.50%
+   */
   const monthlyResults = useMemo(() => [
-    { id: 'm0', month: 'Tháng 02', year: 2026, result: 2.15, highest: false },
-    { id: 'm1', month: 'Tháng 01', year: 2026, result: 8.30, highest: false },
-    { id: 'm2', month: 'Tháng 12', year: 2025, result: 14.65, highest: true },
+    { id: 'm0', month: 'Tháng 02', year: 2026, result: 3.55, highest: false },
+    { id: 'm1', month: 'Tháng 01', year: 2026, result: 7.95, highest: true },
   ], []);
 
   const [selectedMonthId, setSelectedMonthId] = useState(monthlyResults[0].id);
@@ -54,9 +57,8 @@ const App: React.FC = () => {
       ? ((dataWithResults.filter(d => d.isProfit).length / dataWithResults.length) * 100).toFixed(2)
       : "0.00";
     
-    const avgMonthly = monthlyResults.reduce((acc, curr) => acc + curr.result, 0) / monthlyResults.length;
-    
-    return { winRate, avgMonthly: avgMonthly.toFixed(2) };
+    const totalProfit = monthlyResults.reduce((acc, curr) => acc + curr.result, 0);
+    return { winRate, totalProfit: totalProfit.toFixed(2) };
   }, [pnlHistoryFullMonth, monthlyResults]);
 
   const toggleAppFullscreen = () => {
@@ -78,21 +80,21 @@ const App: React.FC = () => {
   }, []);
 
   const masters = useMemo(() => [
-    { rank: 1, name: 'Apex Flow Execution (AFE)', pnl24h: 1.13, amount: 16240.5, private: true },
-    { rank: 2, name: 'Precision Liquidity Strike (PLS)', pnl24h: 0.85, amount: 4120.0, private: false },
-    { rank: 3, name: 'Quantum Pullback System (QPS)', pnl24h: 0.42, amount: 2890.0, private: false },
-    { rank: 4, name: 'Adaptive Range Reversal (ARR)', pnl24h: -0.12, amount: 910.0, private: false },
-    { rank: 5, name: 'Velocity Break Structure (VBS)', pnl24h: 0.25, amount: 1310.0, private: false },
+    { rank: 1, name: 'Apex Flow Execution (AFE)', pnl24h: 1.42, amount: 15432.7, private: true },
+    { rank: 2, name: 'Precision Liquidity Strike (PLS)', pnl24h: 0.85, amount: 3890.0, private: false },
+    { rank: 3, name: 'Quantum Pullback System (QPS)', pnl24h: 0.42, amount: 2570.0, private: false },
+    { rank: 4, name: 'Adaptive Range Reversal (ARR)', pnl24h: -0.12, amount: 920.0, private: false },
+    { rank: 5, name: 'Velocity Break Structure (VBS)', pnl24h: 0.25, amount: 1240.0, private: false },
   ], []);
 
+  // Cấu hình tài chính theo yêu cầu mới
   const financeData = {
-    deposited: 8500.00,
-    withdrawn: 4000.00,
-    profitRate: 25.1, 
+    deposited: 5000.00,
+    withdrawn: 1000.00,
+    profitRate: 11.50, // ROI Tổng
   };
 
-  // Tính chuẩn tài sản: (Tiền nạp gốc + Lợi nhuận) - Tiền rút
-  // (8500 * 1.251) - 4000 = 10633.5 - 4000 = 6633.5
+  // Tính chuẩn tài sản: (5000 * 1.115) - 1000 = 4575
   const calculatedAssets = (financeData.deposited * (1 + financeData.profitRate / 100)) - financeData.withdrawn;
 
   return (
@@ -121,11 +123,11 @@ const App: React.FC = () => {
                 <div className="space-y-4">
                   <div className="inline-flex items-center space-x-2 bg-red-600/10 border border-red-500/20 px-3 py-1 rounded-full">
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-[9px] lg:text-[10px] font-black text-red-500 uppercase tracking-widest">CẬP NHẬT: 02/02/2026 - SMARTMONEY-X AI V4.0</span>
+                    <span className="text-[9px] lg:text-[10px] font-black text-red-500 uppercase tracking-widest">SMARTMONEY-X AI V4.0: OPERATIONAL</span>
                   </div>
                   <h2 className="text-3xl lg:text-6xl font-black tracking-tighter max-w-2xl leading-[1.1]">
-                    Smart Money <br />
-                    <span className="text-gray-500">Kỷ luật kiến tạo thịnh vượng.</span>
+                    Sao chép giao dịch <br />
+                    <span className="text-gray-500">Tự động hóa lợi nhuận.</span>
                   </h2>
                 </div>
 
@@ -136,30 +138,29 @@ const App: React.FC = () => {
                     </div>
                     <h4 className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Tài sản hiện có</h4>
                     <div className="text-xl lg:text-2xl font-black text-white mt-1 font-mono">$ {calculatedAssets.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-                    <p className="text-[10px] text-green-500 mt-1 font-bold">+{financeData.profitRate}% ROI</p>
+                    <p className="text-[10px] text-green-500 mt-1 font-bold">+{financeData.profitRate}% Lợi nhuận</p>
                   </div>
                   <div className="glass-card rounded-2xl p-5 lg:p-6 border border-white/5">
-                    <h4 className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">PnL Trung bình tháng</h4>
-                    <div className="text-xl lg:text-2xl font-black text-red-500 mt-1 font-mono">+{stats.avgMonthly}%</div>
-                    <p className="text-[10px] text-gray-400 mt-1 font-bold">Dựa trên {monthlyResults.length} tháng</p>
-                  </div>
-                  <div className="glass-card rounded-2xl p-5 lg:p-6 border border-white/5">
-                    <h4 className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Tiền nạp</h4>
+                    <h4 className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Tiền nạp gốc</h4>
                     <div className="text-xl lg:text-2xl font-black text-blue-400 mt-1 font-mono">$ {financeData.deposited.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                   </div>
                   <div className="glass-card rounded-2xl p-5 lg:p-6 border border-white/5">
-                    <h4 className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Tiền rút</h4>
+                    <h4 className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Tiền đã rút</h4>
                     <div className="text-xl lg:text-2xl font-black text-red-400 mt-1 font-mono">$ {financeData.withdrawn.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                  </div>
+                  <div className="glass-card rounded-2xl p-5 lg:p-6 border border-white/5">
+                    <h4 className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">Tổng % Lợi nhuận</h4>
+                    <div className="text-xl lg:text-2xl font-black text-green-500 mt-1 font-mono">+{stats.totalProfit}%</div>
                   </div>
                 </div>
 
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg lg:text-2xl font-black text-red-500 tracking-tighter uppercase italic">Hiệu suất Master ngày 02/02</h3>
+                    <h3 className="text-lg lg:text-2xl font-black text-red-500 tracking-tighter uppercase italic">Chiến lược Master hàng đầu</h3>
                   </div>
                   <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4">
                     {masters.map((master, idx) => (
-                      <div key={idx} className={`relative rounded-xl p-4 lg:p-6 flex flex-col items-center text-center transition-all border border-white/5 ${idx === 0 ? 'bg-yellow-600/10 border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.05)]' : 'bg-white/5'}`}>
+                      <div key={idx} className={`relative rounded-xl p-4 lg:p-6 flex flex-col items-center text-center transition-all border border-white/5 ${idx === 0 ? 'bg-yellow-600/10 border-yellow-500/30' : 'bg-white/5'}`}>
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs mb-4 ${idx === 0 ? 'bg-yellow-500 text-black' : 'bg-gray-700 text-white'}`}>{idx + 1}</div>
                         <p className="text-[10px] font-black text-white uppercase line-clamp-2 h-8 leading-tight mb-3">{master.name}</p>
                         <div className="mb-4">
@@ -174,22 +175,23 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
+                {/* BẢNG LỊCH SỬ PNL TRUNG BÌNH */}
                 <div className="glass-card rounded-[1.5rem] p-6 lg:p-8">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center space-x-3">
                       <TrendingUp size={18} className="text-red-500" />
                       <h3 className="font-bold text-base lg:text-lg">Bảng lịch sử PnL Trung bình</h3>
                     </div>
-                    <div className="text-[10px] font-black uppercase text-gray-500 tracking-widest border border-white/10 px-3 py-1 rounded-full">Dữ liệu tài khoản {username}</div>
+                    <div className="text-[10px] font-black uppercase text-gray-500 tracking-widest border border-white/10 px-3 py-1 rounded-full">Tài khoản: {username}</div>
                   </div>
                   
                   <div className="overflow-x-auto">
                     <table className="w-full text-left">
                       <thead>
                         <tr className="text-[10px] uppercase text-gray-500 border-b border-white/5">
-                          <th className="pb-4 font-black">Thời gian</th>
-                          <th className="pb-4 font-black">Lợi nhuận gộp</th>
-                          <th className="pb-4 font-black">Lợi nhuận ròng</th>
+                          <th className="pb-4 font-black">Tháng giao dịch</th>
+                          <th className="pb-4 font-black">Lợi nhuận gộp (%)</th>
+                          <th className="pb-4 font-black">Lợi nhuận ròng ($)</th>
                           <th className="pb-4 font-black">Trạng thái</th>
                         </tr>
                       </thead>
@@ -207,7 +209,7 @@ const App: React.FC = () => {
                             </td>
                             <td className="py-4">
                               <div className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${item.highest ? 'bg-yellow-500/10 text-yellow-500' : 'bg-green-500/10 text-green-500'}`}>
-                                {item.highest ? 'Kỷ lục' : 'Tốt'}
+                                {item.highest ? 'Tối ưu' : 'Ổn định'}
                               </div>
                             </td>
                           </tr>
@@ -225,6 +227,7 @@ const App: React.FC = () => {
             )}
           </div>
 
+          {/* LỊCH SỬ CHI TIẾT SIDEBAR */}
           <div 
             className={`
               fixed lg:static inset-0 lg:inset-auto bg-[#030303] flex flex-col transition-all duration-300 z-[100]
@@ -234,7 +237,7 @@ const App: React.FC = () => {
           >
             <div className={`p-4 lg:p-6 flex flex-col gap-4 sticky top-0 bg-[#030303] z-40 border-b border-white/5`}>
                <div className="flex justify-between items-center">
-                  <h3 className="text-xs font-black uppercase tracking-widest italic text-white/40">Lịch sử Chi tiết</h3>
+                  <h3 className="text-xs font-black uppercase tracking-widest italic text-white/40">Lịch sử Ngày</h3>
                   <button onClick={() => {setIsHistorySidebarOpen(false); setIsHistoryExpanded(false);}} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
                     <X size={18} />
                   </button>
@@ -335,7 +338,7 @@ const App: React.FC = () => {
 
             <div className="bg-[#030303] border-t border-white/5 p-5 space-y-4 sticky bottom-0 z-40">
                <div className="flex items-center space-x-3">
-                  <button className="flex-1 py-3 bg-red-600 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-white italic">SAO CHÉP NGAY</button>
+                  <button className="flex-1 py-3 bg-red-600 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-white italic">SMART MONEY AI</button>
                </div>
             </div>
           </div>
