@@ -1,0 +1,115 @@
+
+import { DailyPnL } from '../types';
+
+export const getDaysInMonth = (month: number, year: number) => {
+  return new Date(year, month, 0).getDate();
+};
+
+const STRATEGIES = [
+  'Alpha-X AI V4.0',
+  'Apex Flow Execution',
+  'Precision Liquidity',
+  'Quantum Pullback',
+  'Velocity Break',
+  'Adaptive Range'
+];
+
+export const generatePnLDataForMonth = (monthName: string, year: number, targetTotalPnL: number): DailyPnL[] => {
+  const monthInt = parseInt(monthName.replace('Tháng ', ''));
+  const daysInMonth = getDaysInMonth(monthInt, year);
+  
+  const isJan2026 = monthInt === 1 && year === 2026;
+  const isFeb2026 = monthInt === 2 && year === 2026;
+  
+  const currentDayLimit = isFeb2026 ? 2 : (isJan2026 ? 31 : daysInMonth);
+
+  const data: DailyPnL[] = [];
+  
+  const lossDaysRatio = 0.185 + (Math.random() * (0.15));
+  const lossDaysCount = Math.floor(currentDayLimit * lossDaysRatio); 
+  const profitDaysCount = currentDayLimit - lossDaysCount;
+
+  let adjustedTarget = targetTotalPnL;
+  let fixedValues: Record<number, number> = {};
+
+  if (isFeb2026) {
+    // Dữ liệu cho ngày 1 và 2 tháng 2
+    fixedValues[1] = 1.02;
+    fixedValues[2] = 1.13;
+    adjustedTarget = 0; // Đã đạt mục tiêu qua fixed
+  } else if (isJan2026) {
+    fixedValues[31] = 6.88;
+    fixedValues[30] = 5.25;
+    fixedValues[29] = 1.14;
+    fixedValues[28] = 6.01;
+    fixedValues[27] = 5.00;
+    fixedValues[26] = 6.07;
+    adjustedTarget = targetTotalPnL - 30.35;
+  }
+
+  const simulationLimit = isFeb2026 ? 0 : (isJan2026 ? 25 : currentDayLimit);
+  const simLossCount = Math.min(lossDaysCount, simulationLimit);
+  const simProfitCount = Math.max(0, simulationLimit - simLossCount);
+
+  const losses: number[] = [];
+  let sumLosses = 0;
+  for (let i = 0; i < simLossCount; i++) {
+    const val = -(1.5 + Math.random() * 0.5);
+    losses.push(val);
+    sumLosses += val;
+  }
+
+  const neededProfitSum = adjustedTarget - sumLosses;
+  const avgProfitPerDay = simProfitCount > 0 ? neededProfitSum / simProfitCount : 0;
+
+  const profits: number[] = [];
+  let currentProfitSum = 0;
+  if (simProfitCount > 0) {
+    for (let i = 0; i < simProfitCount - 1; i++) {
+      const variance = (Math.random() * 0.6 - 0.3) * avgProfitPerDay;
+      let val = avgProfitPerDay + variance;
+      if (val < 0.2) val = 0.5 + (Math.random() * 0.2);
+      profits.push(val);
+      currentProfitSum += val;
+    }
+    profits.push(neededProfitSum - currentProfitSum);
+  }
+
+  const allSimValues = [...losses.map(v => ({ val: v, isProfit: false })), ...profits.map(v => ({ val: v, isProfit: true }))];
+  for (let i = allSimValues.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allSimValues[i], allSimValues[j]] = [allSimValues[j], allSimValues[i]];
+  }
+
+  let simIndex = 0;
+  for (let i = 1; i <= daysInMonth; i++) {
+    const dateStr = `${year}-${monthInt.toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
+    const randomStrategy = STRATEGIES[Math.floor(Math.random() * STRATEGIES.length)];
+    
+    if (fixedValues[i] !== undefined) {
+      data.push({
+        date: dateStr,
+        percentage: fixedValues[i],
+        isProfit: fixedValues[i] > 0,
+        strategy: 'SmartMoney-X AI V4.0'
+      });
+    } else if (i <= currentDayLimit && simIndex < allSimValues.length) {
+      const result = allSimValues[simIndex++];
+      data.push({
+        date: dateStr,
+        percentage: Number(result.val.toFixed(2)),
+        isProfit: result.isProfit,
+        strategy: randomStrategy
+      });
+    } else {
+      data.push({
+        date: dateStr,
+        percentage: 0,
+        isProfit: true,
+        strategy: '-'
+      });
+    }
+  }
+  
+  return data;
+};
